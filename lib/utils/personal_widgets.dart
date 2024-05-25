@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import 'package:inventario_home/utils/utils_service.dart';
+import 'package:inventario_home/routes/routes.dart';
+
+Widget getNapBar(void Function(int index) onTapItem){
+  return BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.qr_code),
+            label: "Scanner"
+          ),
+            
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home"
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inventory),
+            label: "Inventory"
+
+          )
+        ],
+        currentIndex: UtilsService.selectIndex,
+        selectedItemColor: Colors.blue,
+        onTap: onTapItem,
+       
+  );
+}
+
+void navigate(int index, BuildContext context){
+  switch(index){
+        case 0:
+          Navigator.pushNamed(context, Routes.scanner);
+          break;
+        case 1:
+          Navigator.pushNamed(context, Routes.home);
+          break;
+        case 2:
+          Navigator.pushNamed(context, Routes.inventory);
+          break;
+      }
+}
+
