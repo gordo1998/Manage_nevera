@@ -30,11 +30,14 @@ class _Scanner extends State<Scanner>{
   
 
   void anyadirCantidadProductos(String idProducto){
-    if(UtilsService.cantidadPorProducto.containsKey(idProducto)){
-      UtilsService.cantidadPorProducto[idProducto] = UtilsService.cantidadPorProducto[idProducto]! + 1;
+    
+    if(UtilsService.productos.any((product) => product.getId().contains(idProducto))){
+      Product product = UtilsService.productos.firstWhere((p) => p.getId() == idProducto);//DEVUELVE EL PRODUCTO ENCONTRADO
+      product.addCantidad();//Aumentamos una cantidad
     }else {
+      _product.setCantidad(1);
       UtilsService.productos.add(_product);
-      UtilsService.cantidadPorProducto[idProducto] = 1;
+
     }
   }
   
@@ -54,7 +57,7 @@ class _Scanner extends State<Scanner>{
 
     setState(() {
       _barcodeResult = barcodeScanRes;
-      Navigator.pushNamed(context, Routes.inventory, arguments: _barcodeResult);
+      //Navigator.pushNamed(context, Routes.inventory, arguments: _barcodeResult);
     });
     
   }

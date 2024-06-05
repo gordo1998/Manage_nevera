@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:inventario_home/utils/util_camera.dart';
 import 'package:camera/camera.dart';
+import 'package:inventario_home/utils/utils_service.dart' as UService;
+
 
 
 class CameraSite extends StatefulWidget {
@@ -12,7 +13,7 @@ class CameraSite extends StatefulWidget {
 }
 
 class _CameraSite extends State<CameraSite> {
-  WidgetState _widgetState = WidgetState.NONE; //Este será el estado de la camara antes de iniciarse la camara
+  UService.WidgetState _widgetState = UService.WidgetState.NONE; //Este será el estado de la camara antes de iniciarse la camara
   List<CameraDescription>? _cameras; //Aquí se guardarán todas las cámaras que contiene el dispositivo
   CameraController? _cameraController; //Esta será la camara que nosostros querremos usar
 
@@ -23,7 +24,7 @@ class _CameraSite extends State<CameraSite> {
   }
 
   Future<void> iniciarCamara() async{
-    _widgetState = WidgetState.LOADING;//Cambiamos el estado
+    _widgetState = UService.WidgetState.LOADING;//Cambiamos el estado
     if(mounted) {//Si el widget principal está montado entonces iniciamos la cámara
       setState(() {});
     }
@@ -35,12 +36,12 @@ class _CameraSite extends State<CameraSite> {
 
     //Si la cámara devuelve un error lo sabremos, en caso contrario diremos que ya se ha cargado
     if(_cameraController!.value.hasError){
-      _widgetState = WidgetState.ERROR;
+      _widgetState = UService.WidgetState.ERROR;
       if(mounted){
         setState((){});
       }
     }else{
-      _widgetState = WidgetState.LOADED;
+      _widgetState = UService.WidgetState.LOADED;
       if(mounted){
         setState((){});
       }
@@ -72,12 +73,12 @@ class _CameraSite extends State<CameraSite> {
   Widget build(BuildContext context) {
 
     switch(_widgetState){
-      case WidgetState.NONE:
-      case WidgetState.LOADING:
+      case UService.WidgetState.NONE:
+      case UService.WidgetState.LOADING:
         return buildScaffold(context, Center(child: CircularProgressIndicator()));
-      case WidgetState.LOADED:
+      case UService.WidgetState.LOADED:
         return buildScaffold(context, CameraPreview(_cameraController!));
-      case WidgetState.ERROR:
+      case UService.WidgetState.ERROR:
         return buildScaffold(context, Center(child: Text("Parece que ha habido un error"),));
     }
   }

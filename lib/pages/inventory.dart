@@ -1,10 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:inventario_home/models/product.dart';
 import 'package:inventario_home/service/service.dart';
-import 'package:inventario_home/utils/personal_widgets.dart';
-import 'package:inventario_home/utils/util_camera.dart';
-import 'package:inventario_home/utils/utils_service.dart';
+import 'package:inventario_home/utils/utils_service.dart' as UService;
 import 'package:inventario_home/routes/routes.dart';
 
 class Inventory extends StatefulWidget {
@@ -18,25 +17,28 @@ class Inventory extends StatefulWidget {
 class _Inventory extends State<Inventory> {
   
   Service service = Service();
-  WidgetState _state = WidgetState.NONE;
+  UService.WidgetState _state = UService.WidgetState.NONE;
+  //WidgetState _state = WidgetState.NONE;
   bool _isSelected = false;
 
   @override
   void initState(){
     super.initState(); 
-    _state = WidgetState.LOADED;
+    _state = UService.WidgetState.LOADED;
        
   }
 
   void seleccionado(int index){
     setState(() {
-      UtilsService.productos[index].setSelection(true);
+      UService.UtilsService.productos[index].setSelection(true);
+      _isSelected = true;
     });
   }
 
   void deselected(int index){
     setState(() {
-      UtilsService.productos[index].setSelection(false);
+      UService.UtilsService.productos[index].setSelection(false);
+      _isSelected = UService.UtilsService.productos.any((producto) => producto.getSelection() == true);
     });
   }
 
@@ -45,17 +47,70 @@ class _Inventory extends State<Inventory> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Inventario"),
+        actions: <Widget>[
+          _isSelected ? eliminarAllProducts() : Icon(Icons.abc_sharp),
+        ],
       ),
       body: body,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, Routes.scanner);
-        },
-        child: Icon(Icons.qr_code),
-      ),
+      floatingActionButton: _isSelected ? selectDelete(true) : selectDelete(false),
       
       
     );
+  }
+  //Itera todos los productos en la lista. Si el producto está seleccionado y su cantidad es menor a 1 se eliminará de la lista.
+  //Si el producto no es menor a 1 se le restará la cantidad de producto.
+  eliminarProduct(){
+    for(Product product in UService.UtilsService.productos){
+      if (product.getSelection()){//si el producto está seleccionado
+        if (product.getCantidad() < 1){//Si el producto es menor a 1
+          setState(() {
+          UService.UtilsService.productos.remove(product);
+          
+          });     
+        }else{
+          setState(() {
+            product.restCantidad();
+          });
+        } 
+      }
+    }
+  }
+
+  Widget eliminarAllProducts(){
+    return GestureDetector(
+      onTap: (){
+        List<Product> listCompra = UService.UtilsService.productos.where((p) => p.getSelection() == true).toList();
+        addProductsList(listCompra);
+        UService.UtilsService.productos.removeWhere((p) => p.getSelection() == true);
+        setState(() {_isSelected = false;}); 
+      },
+      child: Icon(Icons.delete),
+    );
+  }
+
+  addProductsList(List<Product> productos){
+    for(Product p in productos){
+
+    }
+  }
+
+  Widget selectDelete(bool selectedProduct){
+    switch (selectedProduct){
+      case true:
+        return ElevatedButton(
+          onPressed: () {
+              eliminarProduct();
+          }, 
+          child: Row(
+            children: <Widget>[
+              Text("delete"),
+              Icon(Icons.delete,)
+            ],
+          )
+        );
+      case false:
+        return SizedBox.shrink();
+    }
   }
 
   
@@ -68,21 +123,21 @@ class _Inventory extends State<Inventory> {
 
   Widget contentProduct(){
     return ListView.builder(
-      itemCount: UtilsService.productos.length,
+      itemCount: UService.UtilsService.productos.length,
       itemBuilder: (context, index){
         return Card(
-          color: UtilsService.productos[index].getSelection() ? Colors.red : Colors.blue,//Necesito que esto se convierta en una lista
+          color: UService.UtilsService.productos[index].getSelection() ? Colors.red : Colors.blue,//Necesito que esto se convierta en una lista
           child: GestureDetector(
             onTap:() => deselected(index),
             onLongPress: () => seleccionado(index),
             child: ListTile(
-              title: Text("${UtilsService.productos[index].getTitle()}"),
-              trailing: Text("${UtilsService.cantidadPorProducto[UtilsService.productos[index].getId().toString()]}",
+              title: Text("${UService.UtilsService.productos[index].getTitle()}"),
+              trailing: Text("${UService.UtilsService.cantidadPorProducto[UService.UtilsService.productos[index].getId().toString()]}",
                             style: TextStyle(
                               fontSize: 25.0,
                             ),
                         ),
-              leading: Image.network(UtilsService.productos[index].getImage()),
+              leading: Image.network(UService.UtilsService.productos[index].getImage()),
             ),
           ),
         );
@@ -94,14 +149,14 @@ class _Inventory extends State<Inventory> {
   @override
   Widget build(BuildContext context) {
     switch (_state) {
-      case WidgetState.NONE:
-      case WidgetState.LOADING:
+      case UService.WidgetState.NONE:
+      case UService.WidgetState.LOADING:
         return buildScaffold(
           context, 
           circularProgress()
         );
-      case WidgetState.ERROR:
-      case WidgetState.LOADED:
+      case UService.WidgetState.ERROR:
+      case UService.WidgetState.LOADED:
         return buildScaffold(
           context, 
           contentProduct());

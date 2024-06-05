@@ -4,6 +4,7 @@ class Product{
   String _title;
   String _image;
   String _id;
+  int _cantidad = 0;
   bool _selected = false;
 
 
@@ -27,5 +28,21 @@ class Product{
 
   bool getSelection(){
     return _selected;
+  }
+
+  int getCantidad(){
+    return _cantidad;
+  }
+
+  setCantidad(int cantidad){
+    _cantidad = cantidad;
+  }
+
+  addCantidad(){
+    _cantidad++;
+  }
+
+  restCantidad(){
+    _cantidad--;
   }
 }

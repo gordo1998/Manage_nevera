@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inventario_home/pages/camera_site.dart';
 import 'package:inventario_home/pages/inventory.dart';
+import 'package:inventario_home/pages/lista_compra.dart';
 import 'package:inventario_home/pages/scanner.dart';
 import 'package:inventario_home/routes/app_routes.dart';
 import 'package:inventario_home/routes/routes.dart';
@@ -21,8 +22,9 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> paginas = [
     Scanner(title: "Scanner"),
-    CameraSite(title: "Camera"),
-    Inventory(title: "Inventory")
+    Inventory(title: "Inventory"),
+    ListaCompra(title: "Home"),
+    
   ];
   
   
@@ -57,12 +59,12 @@ class _HomePageState extends State<HomePage> {
           ),
             
           BottomNavigationBarItem(
-            icon: Icon(Icons.camera),
-            label: "Camera"
+            icon: Icon(Icons.inventory),
+            label: "Inventario"
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.inventory),
-            label: "Inventory"
+            icon: Icon(Icons.shopping_bag),
+            label: "Lista"
 
           )
         ],
