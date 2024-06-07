@@ -5,12 +5,12 @@ import 'package:inventario_home/pages/lista_compra.dart';
 import 'package:inventario_home/pages/scanner.dart';
 import 'package:inventario_home/routes/app_routes.dart';
 import 'package:inventario_home/routes/routes.dart';
+import 'package:inventario_home/utils/colors.dart';
 import 'package:inventario_home/utils/utils_service.dart';
 import 'package:inventario_home/utils/personal_widgets.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-  final String title;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   List<Widget> paginas = [
     Scanner(title: "Scanner"),
     Inventory(title: "Inventory"),
-    ListaCompra(title: "Home"),
+    ListaCompra(title: "Compra"),
     
   ];
   
@@ -35,30 +35,20 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
        
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        
-        title: Text(widget.title),
+        backgroundColor: MyColors.AZULMUYOSCURO,
       ),
       body: paginas[_selectIndex],
       
-      /*
-      Center(
-        child: Column(
-          children: [
-            
-          ],
-        ),
-      ),
-      */
-      
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        backgroundColor: MyColors.AZULMUYOSCURO,
+        items:  <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.qr_code),
             label: "Scanner"
           ),
             
           BottomNavigationBarItem(
+            backgroundColor: MyColors.BLANCOAMARILLESCO,
             icon: Icon(Icons.inventory),
             label: "Inventario"
           ),
@@ -69,7 +59,8 @@ class _HomePageState extends State<HomePage> {
           )
         ],
         currentIndex: _selectIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: MyColors.BLANCOAMARILLESCO,
+        unselectedItemColor: MyColors.AZULOSCURO,
         onTap: _onItemTapped,
        
       )

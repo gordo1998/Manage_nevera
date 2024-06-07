@@ -4,6 +4,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:inventario_home/models/product.dart';
 import 'package:inventario_home/routes/routes.dart';
 import 'package:inventario_home/service/service.dart';
+import 'package:inventario_home/utils/colors.dart';
 import 'package:inventario_home/utils/personal_widgets.dart';
 import 'package:inventario_home/utils/utils_service.dart';
 
@@ -66,19 +67,47 @@ class _Scanner extends State<Scanner>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Screen"),
+        backgroundColor: MyColors.BLANCOAMARILLESCO,
       ),
       body: Container(
+        color: MyColors.BLANCOAMARILLESCO,
         padding: EdgeInsets.symmetric(vertical: 20),
         alignment: AlignmentDirectional.bottomCenter,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ElevatedButton(
-              onPressed: () async{
-                scannerNormal();
-                }, 
-                child: Text("Scanear")),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 100),
+              child: Column(
+                children: [
+                  Opacity(
+                    opacity: 0.1,
+                    child: Image.asset("assets/codigodebarragrande.png")),
+                ],
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                  Container(
+                    width: 90,
+                    height: 70,
+                    child: ElevatedButton(
+                      onPressed: () async{
+                        scannerNormal();
+                      }, 
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(  
+                          borderRadius: BorderRadius.circular(15),
+                        )),
+                        backgroundColor: MaterialStateProperty.all<Color>(MyColors.AZULMUYOSCURO),
+                      ),
+                      child: Icon(Icons.barcode_reader, color: MyColors.BLANCOAMARILLESCO,),
+                    ),
+            )
+              ],
+            )
+          
           ],
         ),
       ),

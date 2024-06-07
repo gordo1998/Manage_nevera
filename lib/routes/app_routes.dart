@@ -8,7 +8,7 @@ import 'package:inventario_home/pages/scanner.dart';
 
 Map<String, Widget Function(BuildContext)> get appRoutes {
   return {
-    Routes.home: (context) => HomePage(title: "Pantalla de inicio"),
+    Routes.home: (context) => HomePage(),
     Routes.camera: (context) => CameraSite(title: "Camera"),
     Routes.scanner: (context) => Scanner(title: "Scanner"),
     Routes.inventory: (context) => Inventory(title: "Inventory"),
@@ -18,7 +18,7 @@ Map<String, Widget Function(BuildContext)> get appRoutes {
 List<Widget> get getPages{
   return [
     Scanner(title: "Scanner"),
-    HomePage(title: "Home"),
+    HomePage(), 
     Inventory(title: "Inventory")
   ]; 
 }
