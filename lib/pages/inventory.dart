@@ -243,10 +243,10 @@ class _Inventory extends State<Inventory> {
                 borderRadius: BorderRadius.circular(5),
                 side: BorderSide(
                   width: 2,
-                  color: _isSelected ? Colors.red : MyColors.AZULCLARITO
+                  color: _isSelected ? Colors.red : MyColors.amarilo
                 )
               ),
-              color: products[index].getSelection() ? MyColors.ROJITO : MyColors.AZULCLARITO,//Necesito que esto se convierta en una lista
+              color: products[index].getSelection() ? MyColors.ROJITO : MyColors.amarilo,//Necesito que esto se convierta en una lista
               child: Align(
                 alignment: Alignment.center,
                 child: GestureDetector(

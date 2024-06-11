@@ -35,18 +35,27 @@ class _ListaCompra extends State<ListaCompra> {
       return ListView.builder(
       itemCount: UService.UtilsService.productosAComprobar.length,
       itemBuilder: (context, index) {
-        return Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: ListTile(
-            title: Text("Title: ${UService.UtilsService.productosAComprobar[index].getTitle()}"),
-            trailing: Text("${UService.UtilsService.productosAComprobar[index].getCantidad()}",
-                            style: TextStyle(
-                              fontSize: 25.0,
-                            ),
-                          ),
-            leading: Image.network("${UService.UtilsService.productosAComprobar[index].getImage()}"),
+        return Center(
+          child: Container(
+            height: 100,
+            child: Card(
+              color: Color.fromARGB(255, 132, 212, 250), 
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Align(
+                alignment: Alignment.center,
+                child: ListTile(
+                  title: Text("Title: ${UService.UtilsService.productosAComprobar[index].getTitle()}"),
+                  trailing: Text("${UService.UtilsService.productosAComprobar[index].getCantidad()}",
+                                  style: TextStyle(
+                                    fontSize: 25.0,
+                                  ),
+                                ),
+                  leading: Image.network("${UService.UtilsService.productosAComprobar[index].getImage()}"),
+                ),
+              ),
+            ),
           ),
         );
       },
