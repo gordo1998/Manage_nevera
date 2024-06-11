@@ -92,7 +92,7 @@ class _ListaCompra extends State<ListaCompra> {
                           )),
                       backgroundColor: MaterialStateProperty.all<Color>(MyColors.AZULMUYOSCURO),
                     ), 
-                    child: Icon(Icons.delete,
+                    child: Icon(Icons.payment,
                       color: MyColors.BLANCOAMARILLESCO,),
                   ),
                 ),
@@ -112,7 +112,7 @@ class _ListaCompra extends State<ListaCompra> {
         color: MyColors.BLANCOAMARILLESCO,
         child: buildBody()
       ),
-      floatingActionButton: _anyProducto ? anyButton() : SizedBox.shrink(),
+      floatingActionButton: _anyProducto ?  SizedBox.shrink() : anyButton(),
       
     );
   }
