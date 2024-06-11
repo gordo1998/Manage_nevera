@@ -12,6 +12,8 @@ class ListaCompra extends StatefulWidget {
 
 class _ListaCompra extends State<ListaCompra> {
 
+  bool _anyProducto = true;
+
   @override
   void initState(){
     super.initState();    
@@ -19,6 +21,7 @@ class _ListaCompra extends State<ListaCompra> {
 
   Widget buildBody() {
     if (UService.UtilsService.productosAComprobar.length <= 0){
+      _anyProducto = true;
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 176),
         child: Center(
@@ -32,6 +35,7 @@ class _ListaCompra extends State<ListaCompra> {
         ),
       );
     }else{
+      _anyProducto = false;
       return ListView.builder(
       itemCount: UService.UtilsService.productosAComprobar.length,
       itemBuilder: (context, index) {
@@ -61,8 +65,41 @@ class _ListaCompra extends State<ListaCompra> {
       },
     );
     }
-    
-      
+  }
+
+  eliminarProducto(){
+
+  }
+
+  Widget anyButton(){
+    return Center(
+          child: Padding(
+            padding: const EdgeInsetsDirectional.only(start: 30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              
+              children: [
+                SizedBox(
+                  width: 90,
+                  height: 90,
+                  child: ElevatedButton(
+                    onPressed: () {
+                        eliminarProducto();
+                    },
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(  
+                            borderRadius: BorderRadius.circular(15),
+                          )),
+                      backgroundColor: MaterialStateProperty.all<Color>(MyColors.AZULMUYOSCURO),
+                    ), 
+                    child: Icon(Icons.delete,
+                      color: MyColors.BLANCOAMARILLESCO,),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
   }
 
 
@@ -74,7 +111,9 @@ class _ListaCompra extends State<ListaCompra> {
       body: Container(
         color: MyColors.BLANCOAMARILLESCO,
         child: buildBody()
-        ),
+      ),
+      floatingActionButton: _anyProducto ? anyButton() : SizedBox.shrink(),
+      
     );
   }
 
