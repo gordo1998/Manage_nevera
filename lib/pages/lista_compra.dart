@@ -67,7 +67,7 @@ class _ListaCompra extends State<ListaCompra> {
     }
   }
 
-  eliminarProducto(){
+  comprarPrductos(){
 
   }
 
@@ -84,7 +84,7 @@ class _ListaCompra extends State<ListaCompra> {
                   height: 90,
                   child: ElevatedButton(
                     onPressed: () {
-                        eliminarProducto();
+                        comprarPrductos();
                     },
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(  

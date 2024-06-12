@@ -31,18 +31,38 @@ class _Inventory extends State<Inventory> {
 
   void seleccionado(int index){
     setState(() {
+      
       UService.UtilsService.productos[index].setSelection(true);
       _isSelected = true;
+      print("La variable _isSelected: $_isSelected");
     });
   }
 
   void deselected(int index){
+ 
     setState(() {
-      UService.UtilsService.productos[index].setSelection(false);
-      _isSelected = UService.UtilsService.productos.any((producto) => producto.getSelection() == true);
+      print("La variable _isSelected: $_isSelected");
+      UService.UtilsService.productos[index].setSelection(false);//PONEMOS EL PRODUCTO EN DESSELECCIONADO
+      if (UService.UtilsService.productos.every((producto) => producto.getSelection() == false)){//SI NO HAY NINGUN PRODUCTO SELECCIONADO ENTONCES CAMBIAREMOS _ISSELECTED
+        _isSelected = false;
+      }
     });
   }
 
+  void deselectedId(String id){
+    setState(() {
+      print("La variable _isSelected: $_isSelected");
+      Product prod = UService.UtilsService.productos.firstWhere((producto) => producto.getId() == id);
+      prod.setSelection(false);
+      
+      if (UService.UtilsService.productos.every((producto) => producto.getSelection() == false)){//SI NO HAY NINGUN PRODUCTO SELECCIONADO ENTONCES CAMBIAREMOS _ISSELECTED
+        _isSelected = false;
+      }
+    });
+  }
+
+  /*
+  //SE LLAMARÁ EN TODO MOMENTO A SELECTDELETE.
   Widget isSelectButton(select){
     switch (select) {
       case true:
@@ -53,8 +73,11 @@ class _Inventory extends State<Inventory> {
         return selectDelete(false);
     }
   }
+*/
 
-
+  //AQUI LE PASAMOS LE CONTENDIO DEL BODY
+  //SI LE PRODUCTO ESTÁ SELECCIONADO SE MOSTRARÁ EN EL APPBAR UN ICONO DE ELIMINAR DONDE SE LLAMARÁ A LA FUNCIÓN ELIMINARALLPRODUCTS.
+  //DEN EL FLOATINGACTIONBUTTON SE LLAMARÁ A LA FUNCIÓN ISSELECTEDBUTTON DONDE SE LE PASA UN BOOLEANO.
   Widget buildScaffold(BuildContext context, Widget body){
     return Scaffold(
       appBar: AppBar(
@@ -67,7 +90,7 @@ class _Inventory extends State<Inventory> {
               color: MyColors.BLANCOAMARILLESCO,
               child: body
             ),
-      floatingActionButton: isSelectButton(_isSelected)     
+      floatingActionButton: selectDelete(_isSelected)     
       
     );
   }
@@ -76,39 +99,58 @@ class _Inventory extends State<Inventory> {
   eliminarProduct(){
     List<Product> addProduct = [];
     List<Product> productToremove = [];
-    for(Product product in UService.UtilsService.productos){
+
+    for(Product product in UService.UtilsService.productos){//itero sobre cada producto en la list productos
       
-      
-      if (product.getSelection()){//si el producto está seleccionado
-        
-        if (product.getCantidad() <= 0){//Si el producto es menor a 1
-          Product pCloned = product.cloneAll();
-          addProduct.add(pCloned);
-          productToremove.add(product);
-          //UService.UtilsService.productos.remove(product);
-             
-        }
-        else{
-          setState(() {
-            product.restCantidad();
-          });
-        }
-        addProduct.add(product);
-      }
-      
-    }
-      
-    UService.UtilsService.productos.removeWhere((element) => productToremove.contains(element));//Eliminamos los productos que se han terminado
-    if(UService.UtilsService.productos.any((producto) => producto.getSelection() != true)){//Si no hay ningún producto seleccionado se cambia la varible para que no aparezca boton
       setState(() {
-        _isSelected = false;
-      });
+        if (product.getSelection()){//si el producto está seleccionado
+          
+          if (product.getCantidad() <= 1){//Si el producto es igul o menor a 1
+            Product pCloned = product.cloneAll();//clonamos el producto con todas las cantidades
+            addProduct.add(pCloned);//se añade el producto clonado a la lista addProduct
+            productToremove.add(product);//se añade el producto para posteriormente ser eliminado con un método.
+            deselectedId(product.getId());
+            setState(() {
+              
+          
+        });
+              
+          }
+          else{
+            setState(() {
+              product.restCantidad();//si el producto es mayor a 0 simplemente restaremos la cantidad del producto. Como aun hay cantidad no se eliminará. 
+            });                      //La cantidad agotada se gestionará más adelante
+          }
+          addProduct.add(product);
+        }
+
+    });
+
     }
+      
+    
+   //Si no hay ningún producto seleccionado se cambia la varible para que no aparezca boton
+      setState(() {
+        if(UService.UtilsService.productos.every((producto) => producto.getSelection() == false)){
+          print("La variable _isSelected: $_isSelected");
+          _isSelected = false;
+          print("_isSelected cambiado: $_isSelected");
+        }
+        
+      });
+    
+
+    UService.UtilsService.productos.removeWhere((element) => productToremove.contains(element));//Eliminamos los productos que se han terminado
+    setState(() {
+      
+    });
     
     
     addProductsList(addProduct);
   }
 
+  //SI SE PRESIONA EL BOTÓN SE AÑADIRÁN TODOS LOS PRODUCTOS DE LA LISTA PRODUCTOS A LISTCOMPRA. 
+  //EN CONSECUENCIA, SE ELIMINARÁN TODOS LOS ELEMENTOS DE LA LISTA PRODUCTOS PARA QUE NO SE MUESTREN MÁS ADELANTE.
   Widget eliminarAllProducts(){
     return GestureDetector(
       onTap: (){
@@ -121,19 +163,22 @@ class _Inventory extends State<Inventory> {
     );
   }
 
+  //AÑADE UNA LISTA DE PRODUCTO A LA LISTA DE COMPRAR.
+  //LA DIFERENCIA CON ADDALLPRODUCTLIST ES QUE AL AÑADIR POR PRIMERA VEZ UN PRODUCTO A LA LISTA DE COMPRAR SE AÑADIRÁ CON CANTIDAD 1 POR DEFECTO.
+  //SI EL PRODUCTO YA ESTÁ EN LA LISTA DE COMPRAR SE LE SUMARÁ A LA CANTIDAD 1.
   addProductsList(List<Product> productos){
-    for(Product p in productos){
+    for(Product p in productos){//P SON CADA UNO DE LOS PRODUCTOS PARA SER AÑADIDOS A LA LISTA DE LA COMPRA.
       late Product prod;
       late Product clonedProduct;
       try {
-        prod = UService.UtilsService.productosAComprobar.firstWhere((product) => product.getId() == p.getId());
+        prod = UService.UtilsService.productosAComprobar.firstWhere((product) => product.getId() == p.getId());//DEVUELVE UN EL PRODUCTO CON LAS MISMAS CARACTERÍSTICAS
         
         setState(() {
             prod.setCantidad(prod.getCantidad() + 1);
         });
       }catch(e){
-        if(e is StateError){
-          clonedProduct = p.clone();
+        if(e is StateError){//ESTE FALLO DARÁ SI NO EXISTE EL PRODUCTO ANTERIO, LO CUAL OBLIGA A GENERARLO
+          clonedProduct = p.clone();//CLONAMOS EL PRODUCTO
           setState(() {
             UService.UtilsService.productosAComprobar.add(clonedProduct);
           });
@@ -143,7 +188,8 @@ class _Inventory extends State<Inventory> {
       }
     }
   }
-
+  
+  //AÑADE TODOS LOS PRODUCTOS DE LA LISTA PRODUCTOS A LA LISTA PRODUCTOS A COMPRAR
   addAllProductsList(List<Product> productos){
     for(Product p in productos){
       late Product prod;
@@ -165,7 +211,8 @@ class _Inventory extends State<Inventory> {
       }
     }
   }
-
+  //SI SELECTEDPRODUCT ES VERDADERO MOSTRARÁ UN BOTÓN CENTRADO Y ALINEADO EN EL INFERIOR DE LA PANTALLA. EN CASO CONTRARIO NO MOSTRARÁ NADA.
+  //SI SE PRESIONA EL BOTÓN SE LLAMARÁ A LA FUNCIÓN ELIMINARPRODUCT.
   Widget selectDelete(bool selectedProduct){
     
     switch (selectedProduct){
@@ -182,13 +229,14 @@ class _Inventory extends State<Inventory> {
                   height: 90,
                   child: ElevatedButton(
                     onPressed: () {
+                      setState(() {
                         eliminarProduct();
+                      });
+                        
                     },
                     style: ButtonStyle(
-                      shape: _isSelected ? MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(  
+                      shape:MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(  
                             borderRadius: BorderRadius.circular(15),
-                          )) : MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(  
-                            borderRadius: BorderRadius.circular(0),
                           )),
                       backgroundColor: MaterialStateProperty.all<Color>(MyColors.AZULMUYOSCURO),
                     ), 
@@ -201,8 +249,6 @@ class _Inventory extends State<Inventory> {
           ),
         );
       case false:
-        return SizedBox.shrink();
-      default:
         return SizedBox.shrink();
     }
   }
@@ -243,15 +289,15 @@ class _Inventory extends State<Inventory> {
                 borderRadius: BorderRadius.circular(5),
                 side: BorderSide(
                   width: 2,
-                  color: _isSelected ? Colors.red : MyColors.amarilo
+                  color: products[index].getSelection() ? Colors.red : MyColors.amarilo//EL PRODUCTO ESTÁ SELECCIONADO SE PONDRÁ EN ROJO, EN CASO CONTRARIO AMARILLO
                 )
               ),
               color: products[index].getSelection() ? MyColors.ROJITO : MyColors.amarilo,//Necesito que esto se convierta en una lista
               child: Align(
                 alignment: Alignment.center,
                 child: GestureDetector(
-                  onTap:() => deselected(index),
-                  onLongPress: () => seleccionado(index),
+                  onTap:() => deselected(index),//AQUI SE DESELECCIONA
+                  onLongPress: () => seleccionado(index),//AQUI SE SELECCIONA EL PRODUCTO DE LA LISTA
                   child: ListTile(
                     title: Text("${products[index].getTitle()}"),
                     trailing: Text("${products[index].getCantidad().toString()}",
