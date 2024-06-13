@@ -141,7 +141,7 @@ class _Registro extends State<Registro>{
     return SizedBox.shrink();
   }
   
-  Widget botonRegister(BuildContext context) {
+  Widget botonRegister() {
     return Container(
       width: 130,
       height: 50,
@@ -152,8 +152,8 @@ class _Registro extends State<Registro>{
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.0),
-              side: BorderSide(color: Colors.blue),
+              borderRadius: BorderRadius.circular(10.0),
+              
             ),
           ),
         ),
