@@ -8,6 +8,7 @@ import 'package:inventario_home/routes/routes.dart';
 import 'package:inventario_home/utils/colors.dart';
 import 'package:inventario_home/utils/utils_service.dart';
 import 'package:inventario_home/utils/personal_widgets.dart';
+import 'package:inventario_home/models/sessionUser.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +18,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  
+  @override
+  void initState(){
+    super.initState();
+    SessionUser.instancia.initSession();
+  }
   
   int _selectIndex = 1;
 
@@ -34,8 +41,13 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-       
         backgroundColor: MyColors.AZULMUYOSCURO,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: exitSession,
+          )
+        ],
       ),
       body: paginas[_selectIndex],
       

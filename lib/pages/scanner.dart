@@ -7,6 +7,7 @@ import 'package:inventario_home/service/service.dart';
 import 'package:inventario_home/utils/colors.dart';
 import 'package:inventario_home/utils/personal_widgets.dart';
 import 'package:inventario_home/utils/utils_service.dart';
+import 'package:inventario_home/models/productos_inventario.dart';
 
 class Scanner extends StatefulWidget{
   const Scanner({super.key, required this.title});
@@ -32,12 +33,13 @@ class _Scanner extends State<Scanner>{
 
   void anyadirCantidadProductos(String idProducto){
     
-    if(UtilsService.productos.any((product) => product.getId().contains(idProducto))){
-      Product product = UtilsService.productos.firstWhere((p) => p.getId() == idProducto);//DEVUELVE EL PRODUCTO ENCONTRADO
+    if(Inventario.instance.getProductos().any((product) => product.getId().contains(idProducto))){
+      Product product = Inventario.instance.getProductos().firstWhere((p) => p.getId() == idProducto);//DEVUELVE EL PRODUCTO ENCONTRADO
       product.addCantidad();//Aumentamos una cantidad
     }else {
       _product.setCantidad(1);
-      UtilsService.productos.add(_product);
+      Inventario.instance.getProductos().add(_product);
+      //UtilsService.productos.add(_product);
 
     }
   }

@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: appRoutes,
-      initialRoute: Routes.home,
+      initialRoute: Routes.register,
     );
   }
 }

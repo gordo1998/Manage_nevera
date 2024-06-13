@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:inventario_home/models/sessionUser.dart';
+import 'package:inventario_home/utils/colors.dart';
 import 'package:inventario_home/utils/utils_service.dart';
 import 'package:inventario_home/routes/routes.dart';
 
@@ -39,5 +41,15 @@ void navigate(int index, BuildContext context){
           Navigator.pushNamed(context, Routes.inventory);
           break;
       }
+}
+
+Widget get exitSession{
+  SessionUser.instancia.exitSession();
+  return GestureDetector(
+    onTap: (){
+      //redireccion al loggin sin poder ir hacia atrás.
+    },
+    child: Icon(Icons.exit_to_app, color: MyColors.BLANCOAMARILLESCO,),
+  );
 }
 

@@ -54,6 +54,8 @@ class Product{
   }
   
   Product cloneAll(){
-    return Product(_title, _image, _id, cantidad: this._cantidad);
+    Product producto = Product(_title, _image, _id);
+    producto.setCantidad(this._cantidad);
+    return producto;
   }
 }

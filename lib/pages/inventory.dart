@@ -6,6 +6,8 @@ import 'package:inventario_home/service/service.dart';
 import 'package:inventario_home/utils/colors.dart';
 import 'package:inventario_home/utils/utils_service.dart' as UService;
 import 'package:inventario_home/routes/routes.dart';
+import 'package:inventario_home/models/productos_inventario.dart';
+import 'package:inventario_home/models/productos_lista_compra.dart';
 
 class Inventory extends StatefulWidget {
   const Inventory({super.key, required this.title});
@@ -32,7 +34,7 @@ class _Inventory extends State<Inventory> {
   void seleccionado(int index){
     setState(() {
       
-      UService.UtilsService.productos[index].setSelection(true);
+      Inventario.instance.getProductos()[index].setSelection(true);
       _isSelected = true;
       print("La variable _isSelected: $_isSelected");
     });
@@ -42,8 +44,8 @@ class _Inventory extends State<Inventory> {
  
     setState(() {
       print("La variable _isSelected: $_isSelected");
-      UService.UtilsService.productos[index].setSelection(false);//PONEMOS EL PRODUCTO EN DESSELECCIONADO
-      if (UService.UtilsService.productos.every((producto) => producto.getSelection() == false)){//SI NO HAY NINGUN PRODUCTO SELECCIONADO ENTONCES CAMBIAREMOS _ISSELECTED
+      Inventario.instance.getProductos()[index].setSelection(false);//PONEMOS EL PRODUCTO EN DESSELECCIONADO
+      if (Inventario.instance.getProductos().every((producto) => producto.getSelection() == false)){//SI NO HAY NINGUN PRODUCTO SELECCIONADO ENTONCES CAMBIAREMOS _ISSELECTED
         _isSelected = false;
       }
     });
@@ -52,10 +54,10 @@ class _Inventory extends State<Inventory> {
   void deselectedId(String id){
     setState(() {
       print("La variable _isSelected: $_isSelected");
-      Product prod = UService.UtilsService.productos.firstWhere((producto) => producto.getId() == id);
+      Product prod = Inventario.instance.getProductos().firstWhere((producto) => producto.getId() == id);
       prod.setSelection(false);
       
-      if (UService.UtilsService.productos.every((producto) => producto.getSelection() == false)){//SI NO HAY NINGUN PRODUCTO SELECCIONADO ENTONCES CAMBIAREMOS _ISSELECTED
+      if (Inventario.instance.getProductos().every((producto) => producto.getSelection() == false)){//SI NO HAY NINGUN PRODUCTO SELECCIONADO ENTONCES CAMBIAREMOS _ISSELECTED
         _isSelected = false;
       }
     });
@@ -97,41 +99,42 @@ class _Inventory extends State<Inventory> {
   //Itera todos los productos en la lista. Si el producto está seleccionado y su cantidad es menor a 1 se eliminará de la lista.
   //Si el producto no es menor a 1 se le restará la cantidad de producto.
   eliminarProduct(){
-    List<Product> addProduct = [];
-    List<Product> productToremove = [];
+    List<Product> addProduct = [];//ESTA LISTA ES PARA AÑADIRLA A LA LISTA, ES DECIR QUE LA PASAREMOS A LA FUNCION DE ADDLIST
+    List<Product> productToremove = [];//ESTA LISTA ES PARA ELIMINARLA
 
-    for(Product product in UService.UtilsService.productos){//itero sobre cada producto en la list productos
+    for(Product product in Inventario.instance.getProductos()){//itero sobre cada producto en la list productos
       
       setState(() {
         if (product.getSelection()){//si el producto está seleccionado
           
-          if (product.getCantidad() <= 1){//Si el producto es igul o menor a 1
+          if (product.getCantidad() <= 1){//Si el producto es igual o menor a 1
             Product pCloned = product.cloneAll();//clonamos el producto con todas las cantidades
-            addProduct.add(pCloned);//se añade el producto clonado a la lista addProduct
+            addProduct.add(pCloned);//se añade el producto clonado a la lista addProduct //ESTO SE HACE PARA PODER METER ESTE ELEMENTO 
+            //EN OTRA LISTA SIN QUE UNA ELIMINACION PUEDA VERSE AFECTADA MÁS ADELANTE
             productToremove.add(product);//se añade el producto para posteriormente ser eliminado con un método.
             deselectedId(product.getId());
-            setState(() {
-              
-          
-        });
+            setState(() {});
               
           }
           else{
+            addProduct.add(product);
             setState(() {
               product.restCantidad();//si el producto es mayor a 0 simplemente restaremos la cantidad del producto. Como aun hay cantidad no se eliminará. 
             });                      //La cantidad agotada se gestionará más adelante
           }
-          addProduct.add(product);
+          
         }
 
-    });
+      });
 
     }
+    addProductsList(addProduct);
+
       
     
    //Si no hay ningún producto seleccionado se cambia la varible para que no aparezca boton
       setState(() {
-        if(UService.UtilsService.productos.every((producto) => producto.getSelection() == false)){
+        if(Inventario.instance.getProductos().every((producto) => producto.getSelection() == false)){
           print("La variable _isSelected: $_isSelected");
           _isSelected = false;
           print("_isSelected cambiado: $_isSelected");
@@ -139,14 +142,14 @@ class _Inventory extends State<Inventory> {
         
       });
     
-
-    UService.UtilsService.productos.removeWhere((element) => productToremove.contains(element));//Eliminamos los productos que se han terminado
+    Inventario.instance.getProductos().removeWhere((element) => productToremove.contains(element));
+    //UService.UtilsService.productos.removeWhere((element) => productToremove.contains(element));//Eliminamos los productos que se han terminado
     setState(() {
       
     });
     
     
-    addProductsList(addProduct);
+    
   }
 
   //SI SE PRESIONA EL BOTÓN SE AÑADIRÁN TODOS LOS PRODUCTOS DE LA LISTA PRODUCTOS A LISTCOMPRA. 
@@ -154,9 +157,10 @@ class _Inventory extends State<Inventory> {
   Widget eliminarAllProducts(){
     return GestureDetector(
       onTap: (){
-        List<Product> listCompra = UService.UtilsService.productos.where((p) => p.getSelection() == true).toList();
+        List<Product> listCompra = Inventario.instance.getProductos().where((p) => p.getSelection() == true).toList();
         addAllProductsList(listCompra);
-        UService.UtilsService.productos.removeWhere((p) => p.getSelection() == true);
+        Inventario.instance.getProductos().removeWhere((p) => p.getSelection() == true);
+        //UService.UtilsService.productos.removeWhere((p) => p.getSelection() == true);
         setState(() {_isSelected = false;}); 
       },
       child: Icon(Icons.delete),
@@ -171,7 +175,7 @@ class _Inventory extends State<Inventory> {
       late Product prod;
       late Product clonedProduct;
       try {
-        prod = UService.UtilsService.productosAComprobar.firstWhere((product) => product.getId() == p.getId());//DEVUELVE UN EL PRODUCTO CON LAS MISMAS CARACTERÍSTICAS
+        prod = ListaAComprar.instancia.getProductos().firstWhere((product) => product.getId() == p.getId());//DEVUELVE UN EL PRODUCTO CON LAS MISMAS CARACTERÍSTICAS
         
         setState(() {
             prod.setCantidad(prod.getCantidad() + 1);
@@ -180,7 +184,7 @@ class _Inventory extends State<Inventory> {
         if(e is StateError){//ESTE FALLO DARÁ SI NO EXISTE EL PRODUCTO ANTERIO, LO CUAL OBLIGA A GENERARLO
           clonedProduct = p.clone();//CLONAMOS EL PRODUCTO
           setState(() {
-            UService.UtilsService.productosAComprobar.add(clonedProduct);
+            ListaAComprar.instancia.getProductos().add(clonedProduct);
           });
         }else{
           rethrow;
@@ -194,7 +198,7 @@ class _Inventory extends State<Inventory> {
     for(Product p in productos){
       late Product prod;
       try{//Si hay objeto se guarda
-        prod = UService.UtilsService.productosAComprobar.firstWhere((product) => product.getId() == p.getId());
+        prod = ListaAComprar.instancia.getProductos().firstWhere((product) => product.getId() == p.getId());
        
         setState(() {
           prod.setCantidad(p.getCantidad() + prod.getCantidad());
@@ -202,7 +206,7 @@ class _Inventory extends State<Inventory> {
       } catch (e){//Si hay objeto
         if(e is StateError){
           setState(() {
-            UService.UtilsService.productosAComprobar.add(p);
+            ListaAComprar.instancia.getProductos().add(p);
           });
         }else{//Si es una excepcion distinta
           rethrow;
@@ -262,7 +266,8 @@ class _Inventory extends State<Inventory> {
   
 
   Widget contentProduct(){
-    List<Product> products = UService.UtilsService.productos.where((p) => p.getCantidad() > 0).toList();
+    List<Product> products = Inventario.instance.getProductos().where((p) => p.getCantidad() > 0).toList();//UService.UtilsService.productos.where((p) => p.getCantidad() > 0).toList();
+    
     if (products.length <= 0){
       return Center(
         child: Padding(

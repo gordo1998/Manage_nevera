@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:inventario_home/models/product.dart';
+import 'package:inventario_home/models/productos_pagados.dart';
 import 'package:inventario_home/utils/colors.dart';
 import 'package:inventario_home/utils/utils_service.dart' as UService;
+import 'package:inventario_home/models/productos_lista_compra.dart';
 
 class ListaCompra extends StatefulWidget {
   const ListaCompra({super.key, required this.title});
@@ -16,12 +19,20 @@ class _ListaCompra extends State<ListaCompra> {
 
   @override
   void initState(){
-    super.initState();    
+    super.initState();
+    print("Lista de la compra");
+    for(Product producto in ListaAComprar.instancia.getProductos()){
+      print("Producto: ${producto.getTitle()}, ${producto.getCantidad()}");
+    }
+  }
+
+  mostarBotonComprar(bool comprar){
+    _anyProducto = comprar;
   }
 
   Widget buildBody() {
-    if (UService.UtilsService.productosAComprobar.length <= 0){
-      _anyProducto = true;
+    if (ListaAComprar.instancia.getProductos().length <= 0){
+      mostarBotonComprar(true);
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 176),
         child: Center(
@@ -35,9 +46,9 @@ class _ListaCompra extends State<ListaCompra> {
         ),
       );
     }else{
-      _anyProducto = false;
+      mostarBotonComprar(false);
       return ListView.builder(
-      itemCount: UService.UtilsService.productosAComprobar.length,
+      itemCount: ListaAComprar.instancia.getProductos().length,
       itemBuilder: (context, index) {
         return Center(
           child: Container(
@@ -50,13 +61,13 @@ class _ListaCompra extends State<ListaCompra> {
               child: Align(
                 alignment: Alignment.center,
                 child: ListTile(
-                  title: Text("Title: ${UService.UtilsService.productosAComprobar[index].getTitle()}"),
-                  trailing: Text("${UService.UtilsService.productosAComprobar[index].getCantidad()}",
+                  title: Text("Title: ${ListaAComprar.instancia.getProductos()[index].getTitle()}"),
+                  trailing: Text("${ListaAComprar.instancia.getProductos()[index].getCantidad()}",
                                   style: TextStyle(
                                     fontSize: 25.0,
                                   ),
                                 ),
-                  leading: Image.network("${UService.UtilsService.productosAComprobar[index].getImage()}"),
+                  leading: Image.network("${ListaAComprar.instancia.getProductos()[index].getImage()}"),
                 ),
               ),
             ),
@@ -68,7 +79,16 @@ class _ListaCompra extends State<ListaCompra> {
   }
 
   comprarPrductos(){
-
+    //UService.UtilsService.productosComprados
+    setState(() {
+      ProductosPagados.instancia.setProductos(ListaAComprar.instancia.cloneProducts());
+      ListaAComprar.instancia.clearProducts();
+      print("Lista de productos pagados: ");
+      for(Product producto in ProductosPagados.instancia.getProductos()){
+        print("${producto.getTitle()}, ${producto.getCantidad()}");
+      }
+    });
+    
   }
 
   Widget anyButton(){
