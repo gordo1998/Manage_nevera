@@ -48,7 +48,7 @@ class _Registro extends State<Registro>{
           ),
           label: Row(
             children: [
-              Icon(Icons.lock, color: MyColors.AZULMUYOSCURO,),
+              Icon(Icons.lock, color: MyColors.AZULCLARITO,),
               SizedBox(width: 5,),
               Text("Confirm Password", style: TextStyle(color: Color.fromARGB(100, 0, 0, 0),),)
             ],
@@ -85,7 +85,7 @@ class _Registro extends State<Registro>{
           ),
           label: Row(
             children: [
-              Icon(Icons.lock, color: MyColors.AZULMUYOSCURO,),
+              Icon(Icons.lock, color: MyColors.AZULCLARITO,),
               SizedBox(width: 5,),
               Text("Password", style: TextStyle(color: Color.fromARGB(100, 0, 0, 0),),)
             ],
@@ -124,7 +124,7 @@ class _Registro extends State<Registro>{
           ),
           label: Row(
             children: [
-              Icon(Icons.email, color: MyColors.AZULMUYOSCURO,),
+              Icon(Icons.email, color: MyColors.AZULCLARITO,),
               SizedBox(width: 5,),
               Text("Email", style: TextStyle(color: Color.fromARGB(100, 0, 0, 0),),)
             ],
@@ -138,7 +138,13 @@ class _Registro extends State<Registro>{
   }
 
   Widget haveAccount(){
-    return SizedBox.shrink();
+    return GestureDetector(
+      onTap: (){
+        Navigator.pushReplacementNamed(context, Routes.login);
+      },
+      child: Text("Ya tengo cuenta de Freeze.", 
+          style: TextStyle(color: MyColors.AZULCLARITO, fontWeight: FontWeight.bold),),
+    );
   }
   
   Widget botonRegister() {
@@ -147,29 +153,36 @@ class _Registro extends State<Registro>{
       height: 50,
       child: ElevatedButton(
         onPressed: () {
-          Navigator.pushNamed(context, Routes.home);
+          Navigator.pushReplacementNamed(context, Routes.login);
         },
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
-              
             ),
           ),
+          backgroundColor: MaterialStateProperty.all<Color>(MyColors.AZULCLARITO),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Register"),
+            Text("Register", style: TextStyle(color: MyColors.BLANCOAMARILLESCO),),
             SizedBox(width: 5),
-            Icon(Icons.login),
+            Icon(Icons.login, color: MyColors.BLANCOAMARILLESCO,),
           ],
         ),
       ),
     );
   }
   Widget titleRegister(){
-    return Text("Register");
+    return Text(
+      "Register", 
+      style: TextStyle(
+        fontSize: 40, 
+        color: MyColors.AZULCLARITO,
+        fontFamily: "FrescoStamp",
+      ),
+    );
   }
 
   //ESTE CONTENEDOR CONTIENE EL FORMULARIO DE REGISTRO
@@ -208,7 +221,7 @@ class _Registro extends State<Registro>{
 
           )
         ],
-        color: MyColors.AZULOSCURO,
+        color: MyColors.AZULMUYOSCURO,
         borderRadius: BorderRadius.circular(15),
       ),
       child: Center(
@@ -244,7 +257,12 @@ class _Registro extends State<Registro>{
   Widget build (BuildContext context){
     return Scaffold(
       body: buildBody(),
-      floatingActionButton: haveAccount(),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(left: 30),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: haveAccount()),
+      ),
     );
   }
 }
