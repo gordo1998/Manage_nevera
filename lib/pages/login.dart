@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventario_home/routes/routes.dart';
+import 'package:inventario_home/service_AR/usersAR.dart';
 import 'package:inventario_home/utils/colors.dart';
 
 class Login extends StatefulWidget{
@@ -14,12 +15,22 @@ class _Login extends State<Login>{
   final formKey = GlobalKey<FormState>();
   final controladorEmail = TextEditingController();
   final controladorPassword = TextEditingController();
+  UsersAR serviceUser = UsersAR();
+  int stateRegister = -1;
 
   @override
   void initState(){
     super.initState();
   }
   
+  Widget textErrorLogin(int stateRegister){
+    switch (stateRegister) {
+      case 1:
+        return Text("email o contraseña incorrecto!", style: TextStyle(color: Colors.red),);
+      default:
+        return SizedBox.shrink();
+    }
+  }
 
   Widget textPassword(){
     return Container(
@@ -88,6 +99,11 @@ class _Login extends State<Login>{
           filled: true,
           border: OutlineInputBorder()
         ),
+        validator: (value){
+          if(value!.isEmpty){
+            return "You should put any email!";
+          }
+        }
       ),
     );
   }
@@ -107,8 +123,21 @@ class _Login extends State<Login>{
       width: 130,
       height: 50,
       child: ElevatedButton(
-        onPressed: () {
-          Navigator.pushReplacementNamed(context, Routes.home);
+        onPressed: () async{
+          if(formKey.currentState!.validate()){
+            Map<String, dynamic> respuestaRegistro =  await serviceUser.loginUser({"email" : controladorEmail.text, "password" : controladorPassword.text});
+            setState(() {
+              if (respuestaRegistro["respuesta"] == true){
+                Navigator.pushReplacementNamed(context, Routes.home);
+                
+              
+              } else if(respuestaRegistro["respuesta"] == false){
+                stateRegister = 1;
+              } else{
+                print(respuestaRegistro["respuesta"].toString());
+              }
+            });
+          }
         },
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -152,6 +181,7 @@ class _Login extends State<Login>{
               textEmail(),
               SizedBox(height: 13,),
               textPassword(),
+              textErrorLogin(stateRegister),
             ],
           ),
         ),

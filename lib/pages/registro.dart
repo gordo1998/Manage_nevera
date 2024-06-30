@@ -6,6 +6,7 @@ import 'package:inventario_home/utils/colors.dart';
 import 'package:inventario_home/utils/utils_service.dart';
 import 'package:inventario_home/routes/routes.dart';
 import 'package:inventario_home/routes/app_routes.dart';
+import 'package:inventario_home/service_AR/usersAR.dart';
 
 
 class Registro extends StatefulWidget{
@@ -22,10 +23,21 @@ class _Registro extends State<Registro>{
   final controladorEmail = TextEditingController();
   final controladorUser = TextEditingController();
   final controladorPassword = TextEditingController();
+  int stateRegister = -1;
+  UsersAR serviceUser = UsersAR();
 
   @override
   void initState(){
     super.initState();
+  }
+
+  Widget textErrorRegister(int stateRegister){
+    switch (stateRegister) {
+      case 1:
+        return Text("El usuario ya existe!", style: TextStyle(color: Colors.red),);
+      default:
+        return SizedBox.shrink();
+    }
   }
   
 
@@ -57,11 +69,11 @@ class _Registro extends State<Registro>{
           filled: true,
           border: OutlineInputBorder()
         ),
-        validator: (value){
-          if(value!.isEmpty){
-            return "You should put any password!";
+        validator: (value) {
+          if (value!.isEmpty){
+            return ;
           }
-        }
+        },
       ),
     );
   }
@@ -94,11 +106,11 @@ class _Registro extends State<Registro>{
           filled: true,
           border: OutlineInputBorder()
         ),
-        validator: (value){
-          if(value!.isEmpty){
-            return "You should put any password!";
+        validator: (value) {
+          if (value!.isEmpty){
+            return "";
           }
-        }
+        },
       ),
     );
   }
@@ -131,8 +143,14 @@ class _Registro extends State<Registro>{
           ),
           fillColor: MyColors.BLANCOAMARILLESCO,
           filled: true,
-          border: OutlineInputBorder()
+          border: OutlineInputBorder(),
+          
         ),
+        validator: (value) {
+          if (value!.isEmpty){
+            return "";
+          }
+        },
       ),
     );
   }
@@ -148,12 +166,36 @@ class _Registro extends State<Registro>{
   }
   
   Widget botonRegister() {
-    return Container(
+    return Container (
       width: 130,
       height: 50,
       child: ElevatedButton(
-        onPressed: () {
-          Navigator.pushReplacementNamed(context, Routes.login);
+        onPressed: () async{
+
+          if(formKey.currentState!.validate()) {
+            Map<String, dynamic> respuestaRegistro =  await serviceUser.registerUser({"email" : controladorEmail.text, "password" : controladorPassword.text});
+            
+            setState(() {
+              if (respuestaRegistro["respuesta"] == true){
+              
+                stateRegister = 1;
+              
+              } else if(respuestaRegistro["respuesta"] == false){
+                Navigator.pushReplacementNamed(context, Routes.login);
+              } else{
+                print(respuestaRegistro["respuesta"].toString());
+              }
+            });
+
+            
+          }else{
+            setState(() {
+              stateRegister = 1;
+            });
+            
+            
+          }
+          
         },
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -199,6 +241,7 @@ class _Registro extends State<Registro>{
               textPassword(),
               SizedBox(height: 13,),
               textPasswordConfirm(),
+              textErrorRegister(stateRegister),
             ],
           ),
         ),

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:inventario_home/pages/camera_site.dart';
 import 'package:inventario_home/pages/inventory.dart';
 import 'package:inventario_home/pages/lista_compra.dart';
 import 'package:inventario_home/pages/scanner.dart';
-import 'package:inventario_home/routes/app_routes.dart';
-import 'package:inventario_home/routes/routes.dart';
 import 'package:inventario_home/utils/colors.dart';
-import 'package:inventario_home/utils/utils_service.dart';
 import 'package:inventario_home/utils/personal_widgets.dart';
 import 'package:inventario_home/models/sessionUser.dart';
 
@@ -45,7 +41,7 @@ class _HomePageState extends State<HomePage> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: exitSession,
+            child: exitSession(context),
           )
         ],
       ),

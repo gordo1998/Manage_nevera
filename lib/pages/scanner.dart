@@ -4,6 +4,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:inventario_home/models/product.dart';
 import 'package:inventario_home/routes/routes.dart';
 import 'package:inventario_home/service/service.dart';
+import 'package:inventario_home/service_AR/productosEscaneadosAR.dart';
 import 'package:inventario_home/utils/colors.dart';
 import 'package:inventario_home/utils/personal_widgets.dart';
 import 'package:inventario_home/utils/utils_service.dart';
@@ -20,14 +21,22 @@ class Scanner extends StatefulWidget{
 class _Scanner extends State<Scanner>{
 
   late Product _product;
+  ProductosEscaneadosAR pEscaneado = ProductosEscaneadosAR();
   Service service = Service();
   String? _barcodeResult;
   var barcodeScanRes;
 
   Future<void> getProduct(String code) async{
-    _product = await service.requesteProduct(code);
-    anyadirCantidadProductos(_product.getId().toString());
-    setState((){});
+    Map<String, String> producto = {"codigo_barras" : code};
+    Map<String, dynamic> scanProduct = await pEscaneado.existProduct(producto);
+    if (scanProduct["exist"] == true){
+      //Ira a la base de datos
+    }else if (scanProduct["exist"] == false){
+      _product = await service.requesteProduct(code);
+      anyadirCantidadProductos(_product.getId().toString());
+      setState((){});
+    }
+    
   }
   
 

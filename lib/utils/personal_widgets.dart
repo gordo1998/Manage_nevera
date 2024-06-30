@@ -43,10 +43,11 @@ void navigate(int index, BuildContext context){
       }
 }
 
-Widget get exitSession{
+Widget exitSession(BuildContext context){
   SessionUser.instancia.exitSession();
   return GestureDetector(
     onTap: (){
+      Navigator.pushReplacementNamed(context, Routes.login);
       //redireccion al loggin sin poder ir hacia atrás.
     },
     child: Icon(Icons.exit_to_app, color: MyColors.BLANCOAMARILLESCO,),
